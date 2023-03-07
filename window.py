@@ -27,4 +27,4 @@ class WindowFrame(tk.Frame):
 
     def click(self) -> None:
         self.dialog = simpledialog.askfloat('oh noo', 'no\t\t\t\t')
-        self.di
+
