@@ -1,17 +1,18 @@
 import tkinter as tk
 from tkinter import ttk, simpledialog
 
+
 class MainWindow:
     HEIGHT = 1200
     WIDTH = 500
 
-    def __init__(self):
+    def __init__(self, title: str ='Шифровальщик'):
         self.root = tk.Tk()
         self.app = WindowFrame(self.root)
 
-        self.root.title('Окно')
+        self.root.title(title)
         self.pos = self.root.winfo_screenheight()
-        self.root.geometry(f'{self.HEIGHT}x{self.WIDTH}-{}//2 ')
+        self.root.geometry(f'{self.HEIGHT}x{self.WIDTH}')
         self.icon = tk.PhotoImage(file='images//icon.png')
         self.root.iconphoto(False, self.icon)
 
