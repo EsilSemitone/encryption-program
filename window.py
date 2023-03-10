@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, simpledialog
+from tkinter import ttk
 
 
 class MainWindow:
@@ -18,19 +18,16 @@ class MainWindow:
         self.root.iconphoto(False, self.icon)
         self.root.resizable(False, False)
 
-        self.app = WindowFrame(self.root)
+        self.app = MainWindowFrame(self.root)
 
         self.app.mainloop()
 
 
-class WindowFrame(tk.Frame):
+class MainWindowFrame(tk.Frame):
     def __init__(self, root=None):
         super().__init__(root)
-        self.exit = ttk.Button(text='Cleack me', command=self.click)
-        self.exit.pack(anchor='center', expand=2)
         self.pack()
 
-    def click(self) -> None:
-        self.dialog = simpledialog.askfloat('oh noo', 'no\t\t\t\t')
-        print(self.dialog)
-
+        ttk.Label(text='Поле для ввода').pack(anchor=tk.SW, padx=5, pady=5)
+        self.try_text = tk.Text(height=10, width=50, wrap=tk.WORD).pack(anchor=tk.SW, fill=None)
+        #self.scroll_try = tk.Scrollbar()
