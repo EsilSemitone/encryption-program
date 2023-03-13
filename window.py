@@ -39,3 +39,4 @@ class MainWindowFrame(tk.Frame):
         self.scroll_try = tk.Scrollbar(width=23, command=self.try_text.yview)
         self.try_text["yscrollcommand"] = self.scroll_try.set
         self.scroll_try.place(x=481, y=274, height=203)
+
