@@ -44,17 +44,41 @@ class MainWindowFrame(tk.Frame):
 
         self.textMenu = tk.Menu(tearoff=False)
         self.textMenu.add_command(label='Отчистить', command=self.clear)
-        #self.textMenu.add_command(label='Test', lambda x = self.setMenuPos.event.x_root: )
-        self.try_text.bind('<Button-3>', lambda e, text='try': self.setMenuPos(text, e))
-        self.output_text.bind('<Button-3>', lambda e, text='out': self.setMenuPos(text, e))
+        self.textMenu.add_command(label='Скопировать', command=self.copy)
+        self.textMenu.add_command(label='Вставить', command=self.paste)
 
+        self.try_text.bind('<Button-3>', lambda e, text='try': self.set_menu_pos(text, e))
+        self.output_text.bind('<Button-3>', lambda e, text='out': self.set_menu_pos(text, e))
+
+    class PlaceMenu:
+        place: str = ''
+
+        @classmethod
+        @property
+        def get_place(cls):
+            return cls.place
+
+
+    def paste(self, place=PlaceMenu.place) -> None:
+        ...
 
     def clear(self) -> None:
-        pass
 
-    def setMenuPos(self, where: str, event) -> None:
+        match self.PlaceMenu.get_place:
+            case 'try':
+                self.try_text.delete(0.0, tk.END)
+            case 'out':
+                self.output_text.delete(0.0, tk.END)
 
+    def copy(self) -> None:
+        self.clipboard_clear()
+        match self.PlaceMenu.get_place:
+            case 'try':
+                self.clipboard_append(self.try_text.get())
+            case 'out':
+                self.clipboard_append(self.output_text.get())
+
+    def set_menu_pos(self, where: str, event) -> None:
+        self.PlaceMenu.place = where
         self.textMenu.post(event.x_root, event.y_root)
-
-
 
