@@ -115,3 +115,9 @@ class MainWindowFrame(tk.Frame):
         '''Вызов меню по координатам клика мыши'''
         self.PlaceMenu.place = where
         self.textMenu.post(event.x_root, event.y_root)
+
+
+
+
+
+
