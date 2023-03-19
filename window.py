@@ -35,7 +35,7 @@ class MainWindowFrame(Frame):
                         'будет равен этому числу),\n'
                         'или слово\фразу.\n'
                         'Сдвиг без ключа равен 4',
-        'Перестановка': ''
+        'Перестановка': 'Текст'
     }
 
     def __init__(self, root=None):
@@ -87,7 +87,8 @@ class MainWindowFrame(Frame):
         )
         self.replace_but.place(x=586, y=180)
 
-        self.addition_to_radiobutton('Шифр Цезаря')
+        self.info_lab = Label(text=self.ENCRYPT_LAB_INFO['Шифр Цезаря'])
+        self.info_lab.place(x=730, y=150)
 
     class PlaceMenu:
         '''Хранит в себе информацию по какому окну я вызвал меню'''
@@ -99,7 +100,9 @@ class MainWindowFrame(Frame):
             return cls.place
 
     def addition_to_radiobutton(self, lab):
-        self.info_lab = Label(text=self.ENCRYPT_LAB_INFO[self.choice_encrypt_var.get()]).place(x=730, y=150)
+        self.info_lab.destroy()
+        self.info_lab = Label(text=self.ENCRYPT_LAB_INFO[self.choice_encrypt_var.get()])
+        self.info_lab.place(x=730, y=150)
 
 
     def encrypt(self):
