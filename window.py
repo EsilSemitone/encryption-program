@@ -1,5 +1,5 @@
 from tkinter import Frame, WORD, SW, Button, Tk, Text, END, Menu, PhotoImage, Scrollbar, StringVar
-from tkinter import ttk
+from tkinter.ttk import Label, Radiobutton
 
 
 class MainWindow:
@@ -25,18 +25,31 @@ class MainWindow:
 
 
 class MainWindowFrame(Frame):
+    ENCRYPT_LAB_INFO = {
+        'Шифр Цезаря': 'Это шифр в котором каждый символ\n'
+                        'заменяется символом, находящимся\n'
+                        'на некотором постоянном числе\n'
+                        'позиций левее или правее него\n'
+                        'в алфавите. Ключем может служить\n'
+                        'число (в таком случае сдвиг\n'
+                        'будет равен этому числу),\n'
+                        'или слово\фразу.\n'
+                        'Сдвиг без ключа равен 4',
+        'Перестановка': ''
+    }
+
     def __init__(self, root=None):
         super().__init__(root)
         self.pack()
 
-        ttk.Label(text='Поле для ввода').pack(anchor=SW, padx=5, pady=5)
+        Label(text='Поле для ввода').pack(anchor=SW, padx=5, pady=5)
         self.try_text = Text(height=13, width=70, wrap=WORD)
         self.try_text.pack(anchor=SW, fill=None)
         self.scroll_try = Scrollbar(width=23, command=self.try_text.yview)
         self.try_text["yscrollcommand"] = self.scroll_try.set
         self.scroll_try.place(x=542, y=31, height=211)
 
-        ttk.Label(text='Поле вывода').pack(anchor=SW, padx=5, pady=5)
+        Label(text='Поле вывода').pack(anchor=SW, padx=5, pady=5)
         self.output_text = Text(height=13, width=70, wrap=WORD)
         self.output_text.pack(anchor=SW, fill=None)
         self.scroll_out = Scrollbar(width=23, command=self.try_text.yview)
@@ -56,15 +69,25 @@ class MainWindowFrame(Frame):
         self.decrypt_button = Button(text='Расшифровать', width=38, font='arial 15', command=self.decrypt)
         self.decrypt_button.place(x=568, y=70)
 
-        ttk.Label(text='Ключ').place(x=810, y=120)
+        self.choice_encrypt_var = StringVar(value='Шифр Цезаря')
 
-        self.choice_encrypt = StringVar(value='Шифр Цезаря')
-
-        self.caesar_but = ttk.Radiobutton(text='Шифр Цезаря', value='Шифр Цезаря', variable=self.choice_encrypt)
+        self.caesar_but = Radiobutton(
+            text='Шифр Цезаря',
+            value='Шифр Цезаря',
+            variable=self.choice_encrypt_var,
+            command=lambda lab='Шифр Цезаря': self.addition_to_radiobutton(lab)
+        )
         self.caesar_but.place(x=586, y=150)
 
-        self.replace_but = ttk.Radiobutton(text='Перестановка', value='Перестановка', variable=self.choice_encrypt)
+        self.replace_but = Radiobutton(
+            text='Перестановка',
+            value='Перестановка',
+            variable=self.choice_encrypt_var,
+            command=lambda lab='Шифр Цезаря': self.addition_to_radiobutton(lab)
+        )
         self.replace_but.place(x=586, y=180)
+
+        self.addition_to_radiobutton('Шифр Цезаря')
 
     class PlaceMenu:
         '''Хранит в себе информацию по какому окну я вызвал меню'''
@@ -75,12 +98,17 @@ class MainWindowFrame(Frame):
         def get_place(cls):
             return cls.place
 
+    def addition_to_radiobutton(self, lab):
+        self.info_lab = Label(text=self.ENCRYPT_LAB_INFO[self.choice_encrypt_var.get()]).place(x=730, y=150)
+
+
     def encrypt(self):
         '''Шифруем'''
+
         ...
 
     def decrypt(self):
-        '''Разшифровываем'''
+        '''Раcшифровываем'''
         ...
 
     def paste(self, place=PlaceMenu.place) -> None:
