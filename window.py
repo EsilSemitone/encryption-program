@@ -1,7 +1,7 @@
 from tkinter import Frame, WORD, SW, Button, Tk, Text, END, Menu, PhotoImage, Scrollbar, StringVar
 from tkinter.ttk import Label, Radiobutton
 
-from encrypt import Encrypt
+from encrypt import ...
 
 
 class MainWindow:
@@ -61,9 +61,9 @@ class MainWindowFrame(Frame):
                          'По умолчанию "Привет"',
 
         'Шифр Бэкона': 'Шифр базируется на двоичном\n'
-                        'кодировании алфавита. Затем\n'
-                        'секретное послание «прячется»\n'
-                        'в открытом тексте'
+                       'кодировании алфавита. Затем\n'
+                       'секретное послание «прячется»\n'
+                       'в открытом тексте'
 
     }
 
