@@ -1,6 +1,8 @@
 from tkinter import Frame, WORD, SW, Button, Tk, Text, END, Menu, PhotoImage, Scrollbar, StringVar
 from tkinter.ttk import Label, Radiobutton
 
+from encrypt import Encrypt
+
 
 class MainWindow:
     HEIGHT = 500
@@ -17,6 +19,13 @@ class MainWindow:
         self.root.title(title)
 
         self.app = MainWindowFrame(self.root)
+        self.main_menu = Menu(self.root, tearoff=0)
+        self.root.config(menu=self.main_menu)
+
+        self.file_menu = Menu(self.main_menu, tearoff=0)
+        self.file_menu.add_command(label='Зашифровать файл')
+        self.main_menu.add_cascade(label='Работа с файлами', menu=self.file_menu)
+
         self.app.mainloop()
 
     def update_window(self) -> None:
@@ -27,15 +36,35 @@ class MainWindow:
 class MainWindowFrame(Frame):
     ENCRYPT_LAB_INFO = {
         'Шифр Цезаря': 'Это шифр в котором каждый символ\n'
-                        'заменяется символом, находящимся\n'
-                        'на некотором постоянном числе\n'
-                        'позиций левее или правее него\n'
-                        'в алфавите. Ключем может служить\n'
-                        'число (в таком случае сдвиг\n'
-                        'будет равен этому числу),\n'
-                        'или слово\фразу.\n'
-                        'Сдвиг без ключа равен 4',
-        'Перестановка': 'Текст'
+                       'заменяется символом, находящимся\n'
+                       'на некотором постоянном числе\n'
+                       'позиций левее или правее него\n'
+                       'в алфавите. Ключем может служить\n'
+                       'число (в таком случае сдвиг\n'
+                       'будет равен этому числу),\n'
+                       'или слово\фразу.\n'
+                       'Сдвиг без ключа равен 4',
+
+        'Перестановка': 'Это метод симметричного\n'
+                        'шифрования в котором элементы\n'
+                        'исходного открытого текста\n'
+                        'меняют местами\n'
+                        'Ключом может служить набор цифр\n'
+                        'или фраза\n'
+                        'Ключ по умолчанию 3241',
+
+        'Шифр Виженера': 'Шифр Виженера состоит из\n'
+                         'последовательности нескольких\n '
+                         'шифров Цезаря с различными\n '
+                         'значениями сдвига. Ключем\n'
+                         'служит фраза или набор букв\n'
+                         'По умолчанию "Привет"',
+
+        'Шифр Бэкона': 'Шифр базируется на двоичном\n'
+                        'кодировании алфавита. Затем\n'
+                        'секретное послание «прячется»\n'
+                        'в открытом тексте'
+
     }
 
     def __init__(self, root=None):
@@ -87,11 +116,27 @@ class MainWindowFrame(Frame):
         )
         self.replace_but.place(x=586, y=180)
 
+        self.vigenere_but = Radiobutton(
+            text='Шифр Виженера',
+            value='Шифр Виженера',
+            variable=self.choice_encrypt_var,
+            command=lambda lab='Шифр Виженера': self.addition_to_radiobutton(lab)
+        )
+        self.vigenere_but.place(x=586, y=210)
+
+        self.becon_but = Radiobutton(
+            text='Шифр Бэкона',
+            value='Шифр Бэкона',
+            variable=self.choice_encrypt_var,
+            command=lambda lab='Шифр Бэкона': self.addition_to_radiobutton(lab)
+        )
+        self.becon_but.place(x=586, y=240)
+
         self.info_lab = Label(text=self.ENCRYPT_LAB_INFO['Шифр Цезаря'])
         self.info_lab.place(x=730, y=150)
 
     class PlaceMenu:
-        '''Хранит в себе информацию по какому окну я вызвал меню'''
+        '''Хранит в себе информацию по какому окне я вызвал меню'''
         place: str = ''
 
         @classmethod
@@ -99,11 +144,10 @@ class MainWindowFrame(Frame):
         def get_place(cls):
             return cls.place
 
-    def addition_to_radiobutton(self, lab):
+    def addition_to_radiobutton(self, lab) -> None:
         self.info_lab.destroy()
         self.info_lab = Label(text=self.ENCRYPT_LAB_INFO[self.choice_encrypt_var.get()])
         self.info_lab.place(x=730, y=150)
-
 
     def encrypt(self):
         '''Шифруем'''
@@ -146,9 +190,3 @@ class MainWindowFrame(Frame):
         '''Вызов меню по координатам клика мыши'''
         self.PlaceMenu.place = where
         self.textMenu.post(event.x_root, event.y_root)
-
-
-
-
-
-
