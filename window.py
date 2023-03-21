@@ -1,4 +1,4 @@
-from tkinter import Frame, WORD, SW, Button, Tk, Text, END, Menu, PhotoImage, Scrollbar, StringVar
+from tkinter import Frame, WORD, SW, Button, Tk, Text, END, Menu, PhotoImage, Scrollbar, StringVar, Entry
 from tkinter.ttk import Label, Radiobutton
 
 from encrypt import Cipher
@@ -149,6 +149,10 @@ class MainWindowFrame(Frame):
         self.info_lab = Label(text=self.ENCRYPT_LAB_INFO['Шифр Цезаря'])
         self.info_lab.place(x=730, y=150)
 
+        Label(text='Ключ', font='arial 13').place(x=760, y=320)
+        self.key_input = Entry(width=50)
+        self.key_input.place(x=580, y=350, height=25)
+
     class PlaceMenu:
         '''Хранит в себе информацию по какому окне я вызвал меню'''
         place: str = ''
@@ -165,7 +169,6 @@ class MainWindowFrame(Frame):
 
     def encrypt(self):
         '''Шифруем'''
-
         ...
 
     def decrypt(self):
