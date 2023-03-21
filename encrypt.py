@@ -16,14 +16,53 @@ class Cipher:
     def decrypt(self, text: str=None, key=None) -> str:
         pass
 
-    def caesar(self, input_text=None, key=4) -> str:
+
+class Caesar(Cipher):
+    def __init__(self, text: str = None, key=None):
+        super().__init__()
+
+    def encrypt(self, text: str=None, key=None) -> str:
         pass
 
-    def replace_enc(self, input_text=None, key=3241) -> str:
+    def decrypt(self, text: str=None, key=None) -> str:
         pass
 
-    def vigenere(self, input_text=None, key='Привет') -> str:
+class Replace(Cipher):
+    def __init__(self, text: str = None, key=None):
+        super().__init__()
+
+    def encrypt(self, text: str=None, key=None) -> str:
         pass
 
-    def becon(self, input_text=None, key=None):
+    def decrypt(self, text: str=None, key=None) -> str:
+        pass
+
+class Vigenere(Cipher):
+    def __init__(self, text: str = None, key=None):
+        super().__init__()
+
+    def encrypt(self, text: str=None, key=None) -> str:
+        pass
+
+    def decrypt(self, text: str=None, key=None) -> str:
+        pass
+
+class Becon(Cipher):
+    def __init__(self, text: str = None, key=None):
+        super().__init__()
+
+    def encrypt(self, text: str=None, key=None) -> str:
+        pass
+
+    def decrypt(self, text: str=None, key=None) -> str:
+        pass
+
+class Atbash(Cipher):
+    def __init__(self, text: str = None, key=None):
+        super().__init__()
+
+    def encrypt(self, text: str=None, key=None) -> str:
+        pass
+
+    def decrypt(self, text: str=None, key=None) -> str:
         pass
