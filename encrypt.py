@@ -14,6 +14,7 @@ class Cipher:
         pass
 
     def decrypt(self, text: str=None, key=None) -> str:
+        pass
 
     def caesar(self, input_text=None, key=4) -> str:
         pass

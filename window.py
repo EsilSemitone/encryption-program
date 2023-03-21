@@ -1,7 +1,7 @@
 from tkinter import Frame, WORD, SW, Button, Tk, Text, END, Menu, PhotoImage, Scrollbar, StringVar
 from tkinter.ttk import Label, Radiobutton
 
-from encrypt import ...
+from encrypt import Cipher
 
 
 class MainWindow:
@@ -63,7 +63,13 @@ class MainWindowFrame(Frame):
         'Шифр Бэкона': 'Шифр базируется на двоичном\n'
                        'кодировании алфавита. Затем\n'
                        'секретное послание «прячется»\n'
-                       'в открытом тексте'
+                       'в открытом тексте',
+
+        'Атбаш': 'Простой шифр подстановки\n'
+                      'для алфавитного письма. Впервые\n'
+                      'встречается в древнееврейском\n'
+                      'тексте Библии / Танаха.\n'
+                      'Ключ не требуется'
 
     }
 
@@ -131,6 +137,14 @@ class MainWindowFrame(Frame):
             command=lambda lab='Шифр Бэкона': self.addition_to_radiobutton(lab)
         )
         self.becon_but.place(x=586, y=240)
+
+        self.atshab_but = Radiobutton(
+            text='Атбаш',
+            value='Атбаш',
+            variable=self.choice_encrypt_var,
+            command=lambda lab='Атбаш': self.addition_to_radiobutton(lab)
+        )
+        self.atshab_but.place(x=586, y=270)
 
         self.info_lab = Label(text=self.ENCRYPT_LAB_INFO['Шифр Цезаря'])
         self.info_lab.place(x=730, y=150)
