@@ -1,7 +1,7 @@
 from tkinter import Frame, WORD, SW, Button, Tk, Text, END, Menu, PhotoImage, Scrollbar, StringVar, Entry
 from tkinter.ttk import Label, Radiobutton
 
-from encrypt import Cipher
+from encrypt import Caesar, Replace, Vigenere, Becon, Atbash
 
 
 class MainWindow:
@@ -73,6 +73,8 @@ class MainWindowFrame(Frame):
 
     }
 
+
+
     def __init__(self, root=None):
         super().__init__(root)
         self.pack()
@@ -90,6 +92,8 @@ class MainWindowFrame(Frame):
         self.scroll_out = Scrollbar(width=23, command=self.try_text.yview)
         self.output_text["yscrollcommand"] = self.scroll_out.set
         self.scroll_out.place(x=542, y=272, height=211)
+
+
 
         self.textMenu = Menu(tearoff=False)
         self.textMenu.add_command(label='Очистить', command=self.clear)
@@ -153,6 +157,22 @@ class MainWindowFrame(Frame):
         self.key_input = Entry(width=50)
         self.key_input.place(x=580, y=350, height=25)
 
+        self.ENCRYPT_LIST = {
+            'Шифр Цезаря': Caesar.encrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Перестановка': Replace.encrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Шифр Виженера': Vigenere.encrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Шифр Бэкона': Becon.encrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Атбаш': Atbash.encrypt(self.try_text.get(0.0, END), self.key_input.get())
+        }
+
+        self.DENCRYPT_LIST = {
+            'Шифр Цезаря': Caesar.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Перестановка': Replace.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Шифр Виженера': Vigenere.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Шифр Бэкона': Becon.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Атбаш': Atbash.decrypt(self.try_text.get(0.0, END), self.key_input.get())
+        }
+
     class PlaceMenu:
         '''Хранит в себе информацию по какому окне я вызвал меню'''
         place: str = ''
@@ -168,7 +188,7 @@ class MainWindowFrame(Frame):
         self.info_lab.place(x=730, y=150)
 
     def encrypt(self):
-        '''Шифруем'''
+        self.output_text.insert(END, self.ENCRYPT_LIST[self.choice_encrypt_var.get()])
         ...
 
     def decrypt(self):
