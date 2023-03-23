@@ -1,7 +1,7 @@
-from tkinter import Label
+from abc import ABC, abstractmethod
 
 
-class Cipher:
+class Cipher(ABC):
     ABC_RUS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
     ABC_ENG = 'abcdefghijklmnopqrstuvwxyz'
     OTHER_SYMBOL = '.,<>?!()'
@@ -10,9 +10,11 @@ class Cipher:
         self.text = text
         self.key = key
 
+    @abstractmethod
     def encrypt(self, text: str=None, key=None) -> str:
         pass
 
+    @abstractmethod
     def decrypt(self, text: str=None, key=None) -> str:
         pass
 
@@ -27,6 +29,7 @@ class Caesar(Cipher):
     def decrypt(self, text: str=None, key=None) -> str:
         pass
 
+
 class Replace(Cipher):
     def __init__(self, text: str = None, key=None):
         super().__init__()
@@ -36,6 +39,7 @@ class Replace(Cipher):
 
     def decrypt(self, text: str=None, key=None) -> str:
         pass
+
 
 class Vigenere(Cipher):
     def __init__(self, text: str = None, key=None):
@@ -47,6 +51,7 @@ class Vigenere(Cipher):
     def decrypt(self, text: str=None, key=None) -> str:
         pass
 
+
 class Becon(Cipher):
     def __init__(self, text: str = None, key=None):
         super().__init__()
@@ -56,6 +61,7 @@ class Becon(Cipher):
 
     def decrypt(self, text: str=None, key=None) -> str:
         pass
+
 
 class Atbash(Cipher):
     def __init__(self, text: str = None, key=None):
