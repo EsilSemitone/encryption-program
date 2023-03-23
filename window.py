@@ -66,14 +66,12 @@ class MainWindowFrame(Frame):
                        'в открытом тексте',
 
         'Атбаш': 'Простой шифр подстановки\n'
-                      'для алфавитного письма. Впервые\n'
-                      'встречается в древнееврейском\n'
-                      'тексте Библии / Танаха.\n'
-                      'Ключ не требуется'
+                 'для алфавитного письма. Впервые\n'
+                 'встречается в древнееврейском\n'
+                 'тексте Библии / Танаха.\n'
+                 'Ключ не требуется'
 
     }
-
-
 
     def __init__(self, root=None):
         super().__init__(root)
@@ -93,15 +91,13 @@ class MainWindowFrame(Frame):
         self.output_text["yscrollcommand"] = self.scroll_out.set
         self.scroll_out.place(x=542, y=272, height=211)
 
-
-
         self.textMenu = Menu(tearoff=False)
         self.textMenu.add_command(label='Очистить', command=self.clear)
         self.textMenu.add_command(label='Скопировать', command=self.copy)
         self.textMenu.add_command(label='Вставить', command=self.paste)
 
-        self.try_text.bind('<Button-3>', lambda e, text='try': self.set_menu_pos(text, e))
-        self.output_text.bind('<Button-3>', lambda e, text='out': self.set_menu_pos(text, e))
+        self.try_text.bind('<Button-3>', lambda place, text='try': self.set_menu_pos(text, place))
+        self.output_text.bind('<Button-3>', lambda place, text='out': self.set_menu_pos(text, place))
 
         self.encrypt_button = Button(text='Шифровать', width=38, font='arial 15', command=self.encrypt)
         self.encrypt_button.place(x=568, y=30)
@@ -114,7 +110,7 @@ class MainWindowFrame(Frame):
             text='Шифр Цезаря',
             value='Шифр Цезаря',
             variable=self.choice_encrypt_var,
-            command=lambda lab='Шифр Цезаря': self.addition_to_radiobutton(lab)
+            command=self.addition_to_radiobutton
         )
         self.caesar_but.place(x=586, y=150)
 
@@ -122,7 +118,7 @@ class MainWindowFrame(Frame):
             text='Перестановка',
             value='Перестановка',
             variable=self.choice_encrypt_var,
-            command=lambda lab='Шифр Цезаря': self.addition_to_radiobutton(lab)
+            command=self.addition_to_radiobutton
         )
         self.replace_but.place(x=586, y=180)
 
@@ -130,7 +126,7 @@ class MainWindowFrame(Frame):
             text='Шифр Виженера',
             value='Шифр Виженера',
             variable=self.choice_encrypt_var,
-            command=lambda lab='Шифр Виженера': self.addition_to_radiobutton(lab)
+            command=self.addition_to_radiobutton
         )
         self.vigenere_but.place(x=586, y=210)
 
@@ -138,17 +134,17 @@ class MainWindowFrame(Frame):
             text='Шифр Бэкона',
             value='Шифр Бэкона',
             variable=self.choice_encrypt_var,
-            command=lambda lab='Шифр Бэкона': self.addition_to_radiobutton(lab)
+            command=self.addition_to_radiobutton
         )
         self.becon_but.place(x=586, y=240)
 
-        self.atshab_but = Radiobutton(
+        self.atbash_but = Radiobutton(
             text='Атбаш',
             value='Атбаш',
             variable=self.choice_encrypt_var,
-            command=lambda lab='Атбаш': self.addition_to_radiobutton(lab)
+            command=self.addition_to_radiobutton
         )
-        self.atshab_but.place(x=586, y=270)
+        self.atbash_but.place(x=586, y=270)
 
         self.info_lab = Label(text=self.ENCRYPT_LAB_INFO['Шифр Цезаря'])
         self.info_lab.place(x=730, y=150)
@@ -182,18 +178,22 @@ class MainWindowFrame(Frame):
         def get_place(cls):
             return cls.place
 
-    def addition_to_radiobutton(self, lab) -> None:
+    def addition_to_radiobutton(self) -> None:
         self.info_lab.destroy()
         self.info_lab = Label(text=self.ENCRYPT_LAB_INFO[self.choice_encrypt_var.get()])
         self.info_lab.place(x=730, y=150)
 
     def encrypt(self):
+        '''Шифруем'''
+
+        self.output_text.delete(0.0, END)
         self.output_text.insert(END, self.ENCRYPT_LIST[self.choice_encrypt_var.get()])
-        ...
 
     def decrypt(self):
         '''Раcшифровываем'''
-        ...
+
+        self.output_text.delete(0.0, END)
+        self.output_text.insert(END, self.DENCRYPT_LIST[self.choice_encrypt_var.get()])
 
     def paste(self, place=PlaceMenu.place) -> None:
         '''Вставка в поле текста из буфера обмена'''

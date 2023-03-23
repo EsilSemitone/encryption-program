@@ -10,65 +10,87 @@ class Cipher(ABC):
         self.text = text
         self.key = key
 
+    @staticmethod
     @abstractmethod
-    def encrypt(self, text: str=None, key=None) -> str:
+    def encrypt(text: str, key=None) -> str:
         pass
 
+    @staticmethod
     @abstractmethod
-    def decrypt(self, text: str=None, key=None) -> str:
+    def decrypt(text: str, key=None) -> str:
         pass
 
 
 class Caesar(Cipher):
     def __init__(self, text: str = None, key=None):
         super().__init__()
+        self.text = text
+        self.key = key
 
-    def encrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def encrypt(text: str, key=None) -> str:
         pass
 
-    def decrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def decrypt(text: str, key=None) -> str:
         pass
 
 
 class Replace(Cipher):
     def __init__(self, text: str = None, key=None):
         super().__init__()
+        self.text = text
+        self.key = key
 
-    def encrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def encrypt(text: str, key=None) -> str:
         pass
 
-    def decrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def decrypt(text: str, key=None) -> str:
         pass
 
 
 class Vigenere(Cipher):
     def __init__(self, text: str = None, key=None):
         super().__init__()
+        self.text = text
+        self.key = key
 
-    def encrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def encrypt(text: str, key=None) -> str:
         pass
 
-    def decrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def decrypt(text: str, key=None) -> str:
         pass
 
 
 class Becon(Cipher):
     def __init__(self, text: str = None, key=None):
         super().__init__()
+        self.text = text
+        self.key = key
 
-    def encrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def encrypt(text: str, key=None) -> str:
         pass
 
-    def decrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def decrypt(text: str, key=None) -> str:
         pass
 
 
 class Atbash(Cipher):
     def __init__(self, text: str = None, key=None):
         super().__init__()
+        self.text = text
+        self.key = key
 
-    def encrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def encrypt(text: str, key=None) -> str:
         pass
 
-    def decrypt(self, text: str=None, key=None) -> str:
+    @staticmethod
+    def decrypt(text: str, key=None) -> str:
         pass
