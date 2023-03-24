@@ -12,12 +12,12 @@ class Cipher(ABC):
 
     @staticmethod
     @abstractmethod
-    def encrypt(text: str, key=None) -> str:
+    def encrypt(text: str, key) -> str:
         pass
 
     @staticmethod
     @abstractmethod
-    def decrypt(text: str, key=None) -> str:
+    def decrypt(text: str, key) -> str:
         pass
 
 
@@ -28,7 +28,16 @@ class Caesar(Cipher):
         self.key = key
 
     @staticmethod
-    def encrypt(text: str, key=None) -> str:
+    def encrypt(text: str, key=4) -> str:
+        new_message = ''
+        new_abc = Caesar.ABC_RUS
+        if text.isalpha():
+
+        elif text.isdigit():
+            ...
+        else:
+            return ''
+
         pass
 
     @staticmethod

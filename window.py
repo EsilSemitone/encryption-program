@@ -1,4 +1,6 @@
-from tkinter import Frame, WORD, SW, Button, Tk, Text, END, Menu, PhotoImage, Scrollbar, StringVar, Entry
+from tkinter import Frame, WORD, SW, Button,\
+    Tk, Text, END, Menu, PhotoImage, Scrollbar,\
+    StringVar, Entry, messagebox
 from tkinter.ttk import Label, Radiobutton
 
 from encrypt import Caesar, Replace, Vigenere, Becon, Atbash
@@ -187,7 +189,13 @@ class MainWindowFrame(Frame):
         '''Шифруем'''
 
         self.output_text.delete(0.0, END)
-        self.output_text.insert(END, self.ENCRYPT_LIST[self.choice_encrypt_var.get()])
+        try:
+            self.output_text.insert(END, self.ENCRYPT_LIST[self.choice_encrypt_var.get()])
+        except ValueError:
+            messagebox.showerror(
+                'Внимание!', 'Не верно введен ключ!\n '
+                'Ключом может служить слово длинною до 34 символов\n'
+                'или число меньше 33')
 
     def decrypt(self):
         '''Раcшифровываем'''
