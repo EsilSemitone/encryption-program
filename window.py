@@ -157,10 +157,10 @@ class MainWindowFrame(Frame):
 
         self.ENCRYPT_LIST = {
             'Шифр Цезаря': Caesar.encrypt,
-            'Перестановка': Replace,
-            'Шифр Виженера': Vigenere,
-            'Шифр Бэкона': Becon,
-            'Атбаш': Atbash
+            'Перестановка': Replace.encrypt,
+            'Шифр Виженера': Vigenere.encrypt,
+            'Шифр Бэкона': Becon.encrypt,
+            'Атбаш': Atbash.encrypt
         }
         self.DENCRYPT_LIST = {
             'Шифр Цезаря': Caesar.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
@@ -173,10 +173,10 @@ class MainWindowFrame(Frame):
     def get_func(self, what_func: str):
         match what_func:
             case 'encrypt':
-
                 if len(self.key_input.get()) > 0:
                     print(1)
-                    return self.ENCRYPT_LIST[self.choice_encrypt_var.get()].encrypt(self.try_text.get(0.0, END), self.key_input.get())
+                    return self.ENCRYPT_LIST[
+                        self.choice_encrypt_var.get()](self.try_text.get(0.0, END), self.key_input.get())
                 else:
                     print(2)
                     return self.ENCRYPT_LIST[self.choice_encrypt_var.get()].encrypt(self.try_text.get(0.0, END))
@@ -205,17 +205,13 @@ class MainWindowFrame(Frame):
 
         self.output_text.delete(0.0, END)
         try:
-            self.output_text.insert(END, self.get_func('encrypt'))
-        except ValueError:
-            messagebox.showerror(
-                'Внимание!', 'Не верно введен текст\n'
-                'Шифруемое сообщение не может быть пустым\n'
-                'Текст должен быть на одном языке.')
-        except KeyError:
-            messagebox.showerror(
-                'Внимание!', 'Не верно введен ключ!\n '
-                 'Ключом может служить слово длинною до 34 символов\n'
-                 'или число меньше 33')
+            self.output_text.insert(0.0, self.get_func('encrypt'))
+        except ValueError as er:
+            messagebox.showerror('Внимание!', er)
+            print(er)
+        except KeyError as er:
+            messagebox.showerror('Внимание!', er)
+
 
     def decrypt(self):
         '''Раcшифровываем'''
