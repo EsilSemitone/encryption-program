@@ -30,9 +30,9 @@ class Caesar(Cipher):
     @staticmethod
     def encrypt(text: str, key=4) -> str:
         new_message = ''
-        new_abc = Caesar.ABC_RUS
+        new_abc = Caesar.ABC_RUS[:]
         if text.isalpha():
-
+            ...
         elif text.isdigit():
             ...
         else:

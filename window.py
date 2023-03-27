@@ -193,9 +193,14 @@ class MainWindowFrame(Frame):
             self.output_text.insert(END, self.ENCRYPT_LIST[self.choice_encrypt_var.get()])
         except ValueError:
             messagebox.showerror(
+                'Внимание!', 'Не верно введен текст\n'
+                'Шифруемое сообщение не может быть пустым\n'
+                'Текст должен быть на одном языке.')
+        except KeyError:
+            messagebox.showerror(
                 'Внимание!', 'Не верно введен ключ!\n '
-                'Ключом может служить слово длинною до 34 символов\n'
-                'или число меньше 33')
+                 'Ключом может служить слово длинною до 34 символов\n'
+                 'или число меньше 33')
 
     def decrypt(self):
         '''Раcшифровываем'''
@@ -203,7 +208,7 @@ class MainWindowFrame(Frame):
         self.output_text.delete(0.0, END)
         self.output_text.insert(END, self.DENCRYPT_LIST[self.choice_encrypt_var.get()])
 
-    def paste(self, place=PlaceMenu.place) -> None:
+    def paste(self) -> None:
         '''Вставка в поле текста из буфера обмена'''
 
         match self.PlaceMenu.get_place:
