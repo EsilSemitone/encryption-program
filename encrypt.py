@@ -31,8 +31,11 @@ class Caesar(Cipher):
     def encrypt(text: str, key=4) -> str:
         new_message = ''
         new_abc = Caesar.ABC_RUS[:]
-        if text.isalpha():
-            ...
+        if text.isalpha() and key.isalpha():
+            pos = len(key) * 2 if (len(key) * 2) < len(new_abc) else len(key)
+            new_abc.replace(new_abc[pos:pos + len(key)])
+
+            return new_abc
         elif text.isdigit():
             ...
         else:

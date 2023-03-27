@@ -156,13 +156,12 @@ class MainWindowFrame(Frame):
         self.key_input.place(x=580, y=350, height=25)
 
         self.ENCRYPT_LIST = {
-            'Шифр Цезаря': Caesar.encrypt(self.try_text.get(0.0, END), self.key_input.get()),
-            'Перестановка': Replace.encrypt(self.try_text.get(0.0, END), self.key_input.get()),
-            'Шифр Виженера': Vigenere.encrypt(self.try_text.get(0.0, END), self.key_input.get()),
-            'Шифр Бэкона': Becon.encrypt(self.try_text.get(0.0, END), self.key_input.get()),
-            'Атбаш': Atbash.encrypt(self.try_text.get(0.0, END), self.key_input.get())
+            'Шифр Цезаря': Caesar.encrypt,
+            'Перестановка': Replace,
+            'Шифр Виженера': Vigenere,
+            'Шифр Бэкона': Becon,
+            'Атбаш': Atbash
         }
-
         self.DENCRYPT_LIST = {
             'Шифр Цезаря': Caesar.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
             'Перестановка': Replace.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
@@ -170,6 +169,22 @@ class MainWindowFrame(Frame):
             'Шифр Бэкона': Becon.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
             'Атбаш': Atbash.decrypt(self.try_text.get(0.0, END), self.key_input.get())
         }
+
+    def get_func(self, what_func: str):
+        match what_func:
+            case 'encrypt':
+
+                if len(self.key_input.get()) > 0:
+                    print(1)
+                    return self.ENCRYPT_LIST[self.choice_encrypt_var.get()].encrypt(self.try_text.get(0.0, END), self.key_input.get())
+                else:
+                    print(2)
+                    return self.ENCRYPT_LIST[self.choice_encrypt_var.get()].encrypt(self.try_text.get(0.0, END))
+
+
+
+
+
 
     class PlaceMenu:
         '''Хранит в себе информацию по какому окне я вызвал меню'''
@@ -190,7 +205,7 @@ class MainWindowFrame(Frame):
 
         self.output_text.delete(0.0, END)
         try:
-            self.output_text.insert(END, self.ENCRYPT_LIST[self.choice_encrypt_var.get()])
+            self.output_text.insert(END, self.get_func('encrypt'))
         except ValueError:
             messagebox.showerror(
                 'Внимание!', 'Не верно введен текст\n'
