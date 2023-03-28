@@ -35,32 +35,53 @@ class Caesar(Cipher):
 
         new_message = ''
         text = text.replace('\n', '')
-        print('\n' in text)
+        assert not ('\n' in text), "в тексте перевод строки"
         if text.isalpha():
             language = 'Rus' if text[0] in Caesar._ABC['Rus'] else 'Eng'
+            lenght = len(Caesar._ABC[language])
 
             if key.isalpha():
 
-                if 1 > len(key) > Caesar._ABC[language]:
+                if 2 > len(key) > len(Caesar._ABC[language]):
                     raise KeyError(
                         f'Внимание! Ключевое слово должно '
                         f'быть длинее 1 символа но короче {len(Caesar._ABC[language])}!')
+                else:
+                    pos = len(key) * 2 if (len(key) * 2) < lenght else len(key)
+                
+                new_abc = Caesar.generate_abc(Caesar._ABC[language], pos, lenght - (pos + len(key)), key)
 
-                pos = len(key) * 2 if (len(key) * 2) < len(Caesar._ABC[language]) else len(key)
-                
-                new_abc = Caesar.generate()
-                
                 return new_abc
             elif key.isdigit():
                 pass
+
             raise KeyError('Ключ содержит недопустимые символы или имеет одновременно цифры и буквы')
+
         raise ValueError('Внимание! Не верно введен текст. Шифруемое сообщение не может быть пустым'
                          ' Текст должен быть на одном языке.'
                          ' Без цифр и других знаков')
 
-    
-    def generate(self, abc, count_start, count_end) -> str:
-        pass
+    @staticmethod
+    def generate_abc(abc: str, count_start: int, count_end: int, key) -> str:
+        # key = ''.join([i for i in set(key)])
+        # print(key)
+        res = key
+        for i in key:
+            abc = abc.replace(i, '')
+        abc = iter(abc)
+
+        for i in range(count_end):
+            res += next(abc)
+        for i in range(count_start):
+            res = next(abc) + res
+
+        # res = res + abc[count_end:]
+        # res = abc[0:count_start] + res
+        assert len(res) == len(set(res)), f'pezda {len(res)} != {len(set(res))}'
+        return res
+
+    @staticmethod
+    def generate_int(): pass
 
     @staticmethod
     def decrypt(text: str, key=None) -> str:
