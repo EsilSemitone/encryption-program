@@ -22,7 +22,7 @@ class Cipher(ABC):
     @abstractmethod
     def decrypt(text: str, key) -> str:
         pass
-    
+
 
 class Caesar(Cipher):
     def __init__(self, text: str = None, key=None):
@@ -35,59 +35,86 @@ class Caesar(Cipher):
         '''encrypting message'''
 
         new_message = ''
-        text = text.replace('\n', '')
+        text = Caesar.delete_in_text(text, '\n', ' ', low=True)
+
+        try:
+            key = Caesar.delete_in_text(key, ' ', low=True)
+            print(key)
+        except TypeError:
+            pass
+
         assert not ('\n' in text), "в тексте перевод строки"
-        if text.isalpha():
-            language = 'Rus' if text[0] in Caesar._ABC['Rus'] else 'Eng'
-            lenght = len(Caesar._ABC[language])
 
-            if key.isalpha():
-                key = Caesar.delete_duplicates(key)
-                print(f'key = {key}')
+        if not text.isalpha():
+            raise ValueError('Внимание! Не верно введен текст. Шифруемое сообщение не может быть пустым'
+                             ' Текст должен быть на одном языке.'
+                             ' Без цифр и других знаков')
 
-                if 2 > len(set(key)) > len(Caesar._ABC[language]):
-                    raise KeyError(
-                        f'Внимание! Ключевое слово должно '
-                        f'быть длинее 1 символа но короче {len(Caesar._ABC[language])}!')
-                else:
-                    index_pos = (len(set(key)) * 2 if (len(set(key))) * 2 < lenght else len(set(key))) - 1
-                    print(f'index pos = {index_pos}')
+        language = 'Rus' if text[0] in Caesar._ABC['Rus'] else 'Eng'
+        length = len(Caesar._ABC[language])
 
-                new_abc = Caesar.generate_abc(
-                    Caesar._ABC[language],
-                    index_pos + 1,
-                    lenght - (index_pos + len(set(key)) + 1), key)
-                assert len(new_abc) == len(Caesar._ABC[language]),\
-                    f'alphabet eror lenght {len(new_abc)} != {len(Caesar._ABC[language])}'
+        if key.isalpha():
 
-                return new_abc
-            elif key.isdigit():
-                pass
+            key = Caesar.delete_duplicates(key)
+            print(f'key = {key}')
 
-            raise KeyError('Ключ содержит недопустимые символы или имеет одновременно цифры и буквы')
+            if len(key) > len(Caesar._ABC[language]):
+                raise KeyError(
+                    f'Внимание! Ключевое слово должно '
+                    f'быть длинее 0 символов но короче {len(Caesar._ABC[language])}!')
 
-        raise ValueError('Внимание! Не верно введен текст. Шифруемое сообщение не может быть пустым'
-                         ' Текст должен быть на одном языке.'
-                         ' Без цифр и других знаков')
+            pos = (len(key) * 2 if len(key) * 2 < length else len(key))
+            print(f'index pos = {pos}')
+            print(f'len key {len(key)}')
+
+            new_abc = Caesar.generate_abc(
+                Caesar._ABC[language],
+                length - (pos + len(key)), key)
+
+            assert len(new_abc) == len(Caesar._ABC[language]), \
+                f'alphabet error length my -> {len(new_abc)} !=  normal ->{len(Caesar._ABC[language])}'
+
+            for i in text:
+                text = text.replace(i, new_abc[Caesar._ABC[language].index(i)])
+            print(f'old abs -> {Caesar._ABC[language]}')
+            print(f'new abs -> {new_abc}')
+            return text
+
+        elif key.isdigit():
+            pass
+
+        raise KeyError('Ключ содержит недопустимые символы или имеет одновременно цифры и буквы')
 
     @staticmethod
-    def generate_abc(abc: str, count_start: int, count_end: int, key) -> str:
-        '''generate alphabet on key-word'''
-        # key = ''.join([i for i in set(key)])
-        # print(key)
+    def delete_in_text(text: str, *args, low=False) -> str:
+
+        for i in args:
+            text = text.replace(f'{i}', '')
+        if low:
+            text = text.lower()
+        return text
+
+    @staticmethod
+    def generate_abc(abc: str, count_end: int, key) -> str:
+        """generate alphabet on key-word"""
+
         res = key
-        for i in key:
-            abc = abc.replace(i, '')
-        abc = iter(abc)
+        abc = ''.join([i for i in abc if not (i in key)])
 
-        for i in range(count_end):
-            res += next(abc)
-        for i in range(count_start):
-            res = next(abc) + res
+        # for i in key:
+        #     abc = abc.replace(i, '')
+        # abc = iter(abc)
+        #
+        # for i in range(count_end):
+        #     res += next(abc)
+        # for i in range(count_start):
+        #     res = next(abc) + res
 
-        # res = res + abc[count_end:]
-        # res = abc[0:count_start] + res
-        assert len(res) == len(set(res)), f'duplecate error in generate {len(res)} != {len(set(res))}'
+        res = res + abc[0:count_end + 1] if count_end > 0 else res
+        print(f'В конце {abc[0:count_end]} {count_end} символов')
+        res = abc[count_end + 1:] + res
+        print(f"В начале {abc[count_end:]} {len(abc[count_end])} символов")
+        assert len(res) == len(set(res)), f'duplicate error in generate {len(res)} != {len(set(res))}'
         return res
 
     @staticmethod
@@ -102,7 +129,7 @@ class Caesar(Cipher):
         new_str = ''
         for i in string:
             if string.count(i) > 1:
-                if not(i in duplicates):
+                if not (i in duplicates):
                     duplicates.append(i)
                     new_str += i
             else:
