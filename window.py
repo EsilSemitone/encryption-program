@@ -162,10 +162,11 @@ class MainWindowFrame(Frame):
             'Шифр Бэкона': Becon.encrypt,
             'Атбаш': Atbash.encrypt
         }
+
         self.DENCRYPT_LIST = {
-            'Шифр Цезаря': Caesar.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
-            'Перестановка': Replace.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
-            'Шифр Виженера': Vigenere.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
+            'Шифр Цезаря': Caesar.decrypt,
+            'Перестановка': Replace.decrypt,
+            'Шифр Виженера': Vigenere.decrypt,
             'Шифр Бэкона': Becon.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
             'Атбаш': Atbash.decrypt(self.try_text.get(0.0, END), self.key_input.get())
         }
@@ -179,11 +180,9 @@ class MainWindowFrame(Frame):
                         self.choice_encrypt_var.get()](self.try_text.get(0.0, END), self.key_input.get())
                 else:
                     print(2)
-                    return self.ENCRYPT_LIST[self.choice_encrypt_var.get()].encrypt(self.try_text.get(0.0, END))
-
-
-
-
+                    return self.ENCRYPT_LIST[self.choice_encrypt_var.get()](self.try_text.get(0.0, END))
+            case 'decrypt':
+                pass
 
 
     class PlaceMenu:
@@ -207,10 +206,10 @@ class MainWindowFrame(Frame):
         try:
             self.output_text.insert(0.0, self.get_func('encrypt'))
         except ValueError as er:
-            messagebox.showerror('Внимание!', er)
+            messagebox.showerror('Внимание!', str(er))
             print(er)
         except KeyError as er:
-            messagebox.showerror('Внимание!', er)
+            messagebox.showerror('Внимание!', str(er))
 
 
     def decrypt(self):
