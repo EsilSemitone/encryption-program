@@ -163,7 +163,7 @@ class MainWindowFrame(Frame):
             'Атбаш': Atbash.encrypt
         }
 
-        self.DENCRYPT_LIST = {
+        self.DECRYPT_LIST = {
             'Шифр Цезаря': Caesar.decrypt,
             'Перестановка': Replace.decrypt,
             'Шифр Виженера': Vigenere.decrypt,
@@ -175,14 +175,16 @@ class MainWindowFrame(Frame):
         match what_func:
             case 'encrypt':
                 if len(self.key_input.get()) > 0:
-                    print(1)
                     return self.ENCRYPT_LIST[
                         self.choice_encrypt_var.get()](self.try_text.get(0.0, END), self.key_input.get())
                 else:
-                    print(2)
                     return self.ENCRYPT_LIST[self.choice_encrypt_var.get()](self.try_text.get(0.0, END))
             case 'decrypt':
-                pass
+                if len(self.key_input.get()) > 0:
+                    return self.DECRYPT_LIST[
+                        self.choice_encrypt_var.get()](self.try_text.get(0.0, END), self.key_input.get())
+                else:
+                    return self.DECRYPT_LIST[self.choice_encrypt_var.get()](self.try_text.get(0.0, END))
 
 
     class PlaceMenu:
@@ -216,7 +218,13 @@ class MainWindowFrame(Frame):
         '''Раcшифровываем'''
 
         self.output_text.delete(0.0, END)
-        self.output_text.insert(END, self.DENCRYPT_LIST[self.choice_encrypt_var.get()])
+        try:
+            self.output_text.insert(0.0, self.get_func('decrypt'))
+        except ValueError as er:
+            messagebox.showerror('Внимание!', str(er))
+            print(er)
+        except KeyError as er:
+            messagebox.showerror('Внимание!', str(er))
 
     def paste(self) -> None:
         '''Вставка в поле текста из буфера обмена'''
