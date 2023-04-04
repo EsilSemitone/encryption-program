@@ -1,33 +1,66 @@
 from abc import ABC, abstractmethod
+import re
 
 
 class Cipher(ABC):
-    _ABC = {
+    ABC_ = {
         'Rus': 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
         'Eng': 'abcdefghijklmnopqrstuvwxyz'
     }
 
-    OTHER_SYMBOL = '.,<>?!()'
+    OTHER_SYMBOL = ('.', ',', '<', '>', '?', '!', '(', ')', ' ', '\n')
 
-    def __init__(self, text: str = None, key=None):
+    def __init__(self, modl: str, text: str = None, key=None):
+        self.modl = modl
+
         self.text = text
+        self.text = Cipher.delete_in_text(text, low=True, other=Cipher.OTHER_SYMBOL)
+        if not self.text.isalpha():
+            raise ValueError('Внимание! Не верно введен текст. Cообщение не может быть пустым'
+                             ' Текст должен быть на одном языке.'
+                             ' Без цифр и других знаков')
+        if re.search(r'[A-Za-z]+[А-Яа-я]+', self.text):
+            raise ValueError('Текст должен быть на одном языке.')
+        elif re.search(r'\d+', text):
+            raise ValueError('К сожаления программа не может зашифровывать текст с цифрами.')
+        elif re.search(r"[A-Za-z]+", text):
+            self.language = Cipher.ABC_['Eng']
+        elif re.search(r"[А-Яа-я]+", text):
+            self.language = Cipher.ABC_['Rus']
+
+        assert not ('\n' in self.text), "в тексте перевод строки"
+
         self.key = key
+        self.new_message = ''
 
-    @staticmethod
     @abstractmethod
-    def encrypt(text: str, key) -> str:
+    def encrypt(self) -> str:
+        if self.key.isalpha():
+
+            self.key = Cipher.delete_duplicates(self.key)
+            print(f'key = {self.key}')
+
+            if len(self.key) > len(self.language):
+                raise KeyError(
+                    f'Внимание! Ключевое слово должно '
+                    f'быть длинее 0 символов, но короче {len(self.language)}!')
+
+    @abstractmethod
+    def decrypt(self) -> str:
+        if self.key.isalpha():
+
+            self.key = Cipher.delete_duplicates(self.key)
+            print(f'key = {self.key}')
+
+            if len(self.key) > len(self.language):
+                raise KeyError(
+                    f'Внимание! Ключевое слово должно '
+                    f'быть длинее 0 символов, но короче {len(self.language)}!')
         pass
 
     @staticmethod
-    @abstractmethod
-    def decrypt(text: str, key) -> str:
-        pass
+    def delete_in_text(text: str, low=False, other=None) -> str:
 
-    @staticmethod
-    def delete_in_text(text: str, *args, low=False, other=None) -> str:
-
-        for i in args:
-            text = text.replace(f'{i}', '')
         if other:
             for i in other:
                 text = text.replace(f'{i}', '')
@@ -36,115 +69,98 @@ class Cipher(ABC):
 
         return text
 
+    @staticmethod
+    def delete_duplicates(string: str) -> str:
+        """Функция  для удаления дубликатов ключе"""
+        duplicates = []
+        new_str = ''
+        for i in string:
+            if string.count(i) > 1:
+                if not (i in duplicates):
+                    duplicates.append(i)
+                    new_str += i
+            else:
+                new_str += i
+        return new_str
+
 
 class Caesar(Cipher):
-    def __init__(self, text: str = None, key=None):
-        super().__init__()
-        self.text = text
-        self.key = key
+    def __init__(self, modl: str, text: str = None, key: str | int = 4):
+        super().__init__(modl, text, key)
 
-    @staticmethod
-    def encrypt(text: str, key=4) -> str:
-        '''encrypting message'''
+        self.pos = None
+        if re.search(r"\w+", self.key):
+            self.key = Cipher.delete_in_text(key, low=True, other=Caesar.OTHER_SYMBOL)
+            if not key.isalpha():
+                raise KeyError('Внимание! Ключ не может содержать одновременно цифры и буквы!')
 
+        if self.modl == 'encrypt':
+            self.new_message = self.encrypt()
+        else:
+            self.new_message = self.decrypt()
+
+    def __str__(self):
+        return self.new_message
+
+    def encrypt(self) -> str:
+        '''Шифруем'''
+        super().encrypt()
         new_message = ''
-        text = Caesar.delete_in_text(text, '\n', ' ', other=Caesar.OTHER_SYMBOL, low=True)
 
-        try:
-            key = Caesar.delete_in_text(key, ' ', low=True)
-            print(key)
-        except TypeError:
-            pass
+        if self.key.isalpha():
+            self.pos = len(self.key) if (len(self.language) - len(self.key) * 2) > 0 else len(self.key) // 2
 
-        assert not ('\n' in text), "в тексте перевод строки"
+            self.count_end = len(self.language) - (self.pos + len(self.key))
 
-        if not text.isalpha():
-            raise ValueError('Внимание! Не верно введен текст. Шифруемое сообщение не может быть пустым'
-                             ' Текст должен быть на одном языке.'
-                             ' Без цифр и других знаков')
+            self.new_abc = Caesar.generate_abc(
+                self.language,
+                self.count_end,
+                self.key)
 
-        language = 'Rus' if text[0] in Caesar._ABC['Rus'] else 'Eng'
-        length = len(Caesar._ABC[language])
+            assert len(self.new_abc) == len(self.language), \
+                f'alphabet error length my -> {len(self.new_abc)} !=  normal ->{len(self.language)}'
 
-        if key.isalpha():
-
-            key = Caesar.delete_duplicates(key)
-            print(f'key = {key}')
-
-            if len(key) > len(Caesar._ABC[language]):
-                raise KeyError(
-                    f'Внимание! Ключевое слово должно '
-                    f'быть длинее 0 символов, но короче {len(Caesar._ABC[language])}!')
-
-            len_key = len(key)
-
-            pos = len_key if (length - len_key * 2) > 0 else len_key // 2
-
-            count_end = length - (pos + len(key))
-
-            #print(f'index pos = {pos}')
-            #print(f'len key {len(key)}')
-
-            new_abc = Caesar.generate_abc(
-                Caesar._ABC[language],
-                count_end,
-                key)
-
-            assert len(new_abc) == len(Caesar._ABC[language]), \
-                f'alphabet error length my -> {len(new_abc)} !=  normal ->{len(Caesar._ABC[language])}'
-
-            for i in text:
-                new_message += new_abc[Caesar._ABC[language].index(i)]
-            print(f'old abs -> {Caesar._ABC[language]}')
-            print(f'new abs -> {new_abc}')
+            for i in self.text:
+                new_message += self.new_abc[self.language.index(i)]
+            print(f'old abs -> {self.language}')
+            print(f'new abs -> {self.new_abc}')
             return new_message
 
-        elif key.isdigit():
+        elif self.key.isdigit():
             pass
 
-        raise KeyError('Ключ содержит недопустимые символы или имеет одновременно цифры и буквы')
 
-    @staticmethod
-    def decrypt(text: str, key=None) -> str:
-        """По началу я хотел избежать повторений ниже, но подумав понял что
-                        код станет сильно непонятным"""
+    def decrypt(self) -> str:
+        """Расшифруем"""
+        super().decrypt()
         new_message = ''
-        text = Caesar.delete_in_text(text, '\n', low=True)
 
-        if not text.isalpha():
-            raise ValueError('Внимание! Не верно введен текст. Разшифровываемое сообщение не может быть пустым'
-                             ' Текст должен быть на одном языке.'
-                             ' Без цифр и других знаков')
+        if self.key.isalpha():
+            self.pos = len(self.key) if (len(self.language) - len(self.key) * 2) > 0 else len(self.key) // 2
 
-        language = 'Rus' if text[0] in Caesar._ABC['Rus'] else 'Eng'
-        length = len(Caesar._ABC[language])
+            self.count_end = len(self.language) - (self.pos + len(self.key))
 
-        if key.isalpha():
-            key = Caesar.delete_duplicates(key)
-            if len(key) > len(Caesar._ABC[language]):
-                raise KeyError(
-                    f'Внимание! Ключевое слово должно '
-                    f'быть длинее 0 символов, но короче {len(Caesar._ABC[language])}!')
+            self.new_abc = Caesar.generate_abc(
+                self.language,
+                self.count_end,
+                self.key)
 
-            len_key = len(key)
-            pos = len_key if (length - len_key * 2) > 0 else len_key // 2
-            count_end = length - (pos + len(key))
+            assert len(self.new_abc) == len(self.language), \
+                f'alphabet error length my -> {len(self.new_abc)} !=  normal ->{len(self.language)}'
 
-            new_abc = Caesar.generate_abc(
-                Caesar._ABC[language],
-                count_end,
-                key)
-
-            assert len(new_abc) == len(Caesar._ABC[language]), \
-                f'alphabet error length my -> {len(new_abc)} !=  normal ->{len(Caesar._ABC[language])}'
-
-            for i in text:
-                new_message += Caesar._ABC[language][new_abc.index(i)]
+            for i in self.text:
+                new_message += self.language[self.new_abc.index(i)]
+            print(f'new abs -> {self.new_abc}')
+            print(f'old abs -> {self.language}')
             return new_message
+
+        elif self.key.isdigit():
+            pass
+
 
     @staticmethod
     def generate_abc(abc: str, count_end: int, key) -> str:
-        """generate alphabet on key-word"""
+        """Создаем алфавить для шифровки"""
 
         res = key
         abc = ''.join([i for i in abc if not (i in key)])
@@ -161,77 +177,62 @@ class Caesar(Cipher):
         '''generate alphabet on numerical key'''
         pass
 
-    @staticmethod
-    def delete_duplicates(string: str) -> str:
-        """function for delete duplicates on key"""
-        duplicates = []
-        new_str = ''
-        for i in string:
-            if string.count(i) > 1:
-                if not (i in duplicates):
-                    duplicates.append(i)
-                    new_str += i
-            else:
-                new_str += i
-        return new_str
-
-
 
 class Replace(Cipher):
     def __init__(self, text: str = None, key=None):
-        super().__init__()
-        self.text = text
-        self.key = key
+        super().__init__(text, key)
 
-    @staticmethod
-    def encrypt(text: str, key=None) -> str:
-        pass
+    def encrypt(self) -> str:
+        '''Шифруем'''
+        super().encrypt()
+        new_message = ''
 
-    @staticmethod
-    def decrypt(text: str, key=None) -> str:
-        pass
+    def decrypt(self) -> str:
+        """Расшифруем"""
+        super().decrypt()
+        new_message = ''
 
 
 class Vigenere(Cipher):
     def __init__(self, text: str = None, key=None):
-        super().__init__()
-        self.text = text
-        self.key = key
+        super().__init__(text, key)
 
-    @staticmethod
-    def encrypt(text: str, key=None) -> str:
-        pass
+    def encrypt(self) -> str:
+        '''Шифруем'''
+        super().encrypt()
+        new_message = ''
 
-    @staticmethod
-    def decrypt(text: str, key=None) -> str:
-        pass
+    def decrypt(self) -> str:
+        """Расшифруем"""
+        super().decrypt()
+        new_message = ''
 
 
 class Becon(Cipher):
     def __init__(self, text: str = None, key=None):
-        super().__init__()
-        self.text = text
-        self.key = key
+        super().__init__(text, key)
 
-    @staticmethod
-    def encrypt(text: str, key=None) -> str:
-        pass
+    def encrypt(self) -> str:
+        '''Шифруем'''
+        super().encrypt()
+        new_message = ''
 
-    @staticmethod
-    def decrypt(text: str, key=None) -> str:
-        pass
+    def decrypt(self) -> str:
+        """Расшифруем"""
+        super().decrypt()
+        new_message = ''
 
 
 class Atbash(Cipher):
     def __init__(self, text: str = None, key=None):
-        super().__init__()
-        self.text = text
-        self.key = key
+        super().__init__(text, key)
 
-    @staticmethod
-    def encrypt(text: str, key=None) -> str:
-        pass
+    def encrypt(self) -> str:
+        '''Шифруем'''
+        super().encrypt()
+        new_message = ''
 
-    @staticmethod
-    def decrypt(text: str, key=None) -> str:
-        pass
+    def decrypt(self) -> str:
+        """Расшифруем"""
+        super().decrypt()
+        new_message = ''

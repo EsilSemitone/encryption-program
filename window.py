@@ -1,5 +1,5 @@
-from tkinter import Frame, WORD, SW, Button,\
-    Tk, Text, END, Menu, PhotoImage, Scrollbar,\
+from tkinter import Frame, WORD, SW, Button, \
+    Tk, Text, END, Menu, PhotoImage, Scrollbar, \
     StringVar, Entry, messagebox
 from tkinter.ttk import Label, Radiobutton
 
@@ -21,6 +21,7 @@ class MainWindow:
         self.root.title(title)
 
         self.app = MainWindowFrame(self.root)
+
         self.main_menu = Menu(self.root, tearoff=0)
         self.root.config(menu=self.main_menu)
 
@@ -156,36 +157,12 @@ class MainWindowFrame(Frame):
         self.key_input.place(x=580, y=350, height=25)
 
         self.ENCRYPT_LIST = {
-            'Шифр Цезаря': Caesar.encrypt,
-            'Перестановка': Replace.encrypt,
-            'Шифр Виженера': Vigenere.encrypt,
-            'Шифр Бэкона': Becon.encrypt,
-            'Атбаш': Atbash.encrypt
+            'Шифр Цезаря': Caesar,
+            'Перестановка': Replace,
+            'Шифр Виженера': Vigenere,
+            'Шифр Бэкона': Becon,
+            'Атбаш': Atbash
         }
-
-        self.DECRYPT_LIST = {
-            'Шифр Цезаря': Caesar.decrypt,
-            'Перестановка': Replace.decrypt,
-            'Шифр Виженера': Vigenere.decrypt,
-            'Шифр Бэкона': Becon.decrypt(self.try_text.get(0.0, END), self.key_input.get()),
-            'Атбаш': Atbash.decrypt(self.try_text.get(0.0, END), self.key_input.get())
-        }
-
-    def get_func(self, what_func: str):
-        match what_func:
-            case 'encrypt':
-                if len(self.key_input.get()) > 0:
-                    return self.ENCRYPT_LIST[
-                        self.choice_encrypt_var.get()](self.try_text.get(0.0, END), self.key_input.get())
-                else:
-                    return self.ENCRYPT_LIST[self.choice_encrypt_var.get()](self.try_text.get(0.0, END))
-            case 'decrypt':
-                if len(self.key_input.get()) > 0:
-                    return self.DECRYPT_LIST[
-                        self.choice_encrypt_var.get()](self.try_text.get(0.0, END), self.key_input.get())
-                else:
-                    return self.DECRYPT_LIST[self.choice_encrypt_var.get()](self.try_text.get(0.0, END))
-
 
     class PlaceMenu:
         '''Хранит в себе информацию по какому окне я вызвал меню'''
@@ -197,29 +174,37 @@ class MainWindowFrame(Frame):
             return cls.place
 
     def addition_to_radiobutton(self) -> None:
+        """Функция вызываемая при активации radiobuton"""
         self.info_lab.destroy()
         self.info_lab = Label(text=self.ENCRYPT_LAB_INFO[self.choice_encrypt_var.get()])
         self.info_lab.place(x=730, y=150)
 
     def encrypt(self):
         '''Шифруем'''
-
         self.output_text.delete(0.0, END)
+
         try:
-            self.output_text.insert(0.0, self.get_func('encrypt'))
+            self.new_text = self.ENCRYPT_LIST[self.choice_encrypt_var.get()]('encrypt',
+                                                                             self.try_text.get(0.0, END),
+                                                                             self.key_input.get()
+                                                                             )
+            self.output_text.insert(0.0, self.new_text)
         except ValueError as er:
             messagebox.showerror('Внимание!', str(er))
             print(er)
         except KeyError as er:
             messagebox.showerror('Внимание!', str(er))
 
-
     def decrypt(self):
         '''Раcшифровываем'''
 
         self.output_text.delete(0.0, END)
+
         try:
-            self.output_text.insert(0.0, self.get_func('decrypt'))
+            self.new_text = self.ENCRYPT_LIST[self.choice_encrypt_var.get()]('decrypt', self.try_text.get(0.0, END),
+                                                                             self.key_input.get()
+                                                                             )
+            self.output_text.insert(0.0, self.new_text)
         except ValueError as er:
             messagebox.showerror('Внимание!', str(er))
             print(er)
