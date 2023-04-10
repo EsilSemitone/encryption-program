@@ -27,7 +27,9 @@ class MainWindow:
 
         self.file_menu = Menu(self.main_menu, tearoff=0)
         self.file_menu.add_command(label='Зашифровать файл')
+        self.file_menu.add_command(label='Расшифровать файл')
         self.main_menu.add_cascade(label='Работа с файлами', menu=self.file_menu)
+        self.main_menu.add_cascade(label='Продвинутое шифрование')
 
         self.app.mainloop()
 
@@ -53,8 +55,9 @@ class MainWindowFrame(Frame):
                         'исходного открытого текста\n'
                         'меняют местами\n'
                         'Ключом может служить набор цифр\n'
-                        'или фраза\n'
-                        'Ключ по умолчанию 3241',
+                        'длинее 2 \n'
+                        'По умолчанию будет использоваться \n'
+                        'Табличная маршрутная перестановка.',
 
         'Шифр Виженера': 'Шифр Виженера состоит из\n'
                          'последовательности нескольких\n '
@@ -165,7 +168,7 @@ class MainWindowFrame(Frame):
         }
 
     class PlaceMenu:
-        '''Хранит в себе информацию по какому окне я вызвал меню'''
+        '''Хранит в себе информацию по какому окну я вызвал меню'''
         place: str = ''
 
         @classmethod

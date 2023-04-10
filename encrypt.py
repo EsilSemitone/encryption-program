@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import re
 
-
+from tools import delete_in_text, delete_duplicates, split_text
 class Cipher(ABC):
     ABC_ = {
         'Rus': 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
@@ -14,7 +14,7 @@ class Cipher(ABC):
         self.modl = modl
 
         self.text = text
-        self.text = Cipher.delete_in_text(text, low=True, other=Cipher.OTHER_SYMBOL)
+        self.text = delete_in_text(text, low=True, other=Cipher.OTHER_SYMBOL)
         if not self.text.isalpha():
             raise ValueError('Внимание! Не верно введен текст. Cообщение не может быть пустым'
                              ' Текст должен быть на одном языке.'
@@ -35,32 +35,7 @@ class Cipher(ABC):
 
     @abstractmethod
     def main_func(self) -> str:
-        ...
-
-    @staticmethod
-    def delete_in_text(text: str, low=False, other=None) -> str:
-
-        if other:
-            for i in other:
-                text = text.replace(f'{i}', '')
-        if low:
-            text = text.lower()
-
-        return text
-
-    @staticmethod
-    def delete_duplicates(string: str) -> str:
-        """Функция  для удаления дубликатов ключе"""
-        duplicates = []
-        new_str = ''
-        for i in string:
-            if string.count(i) > 1:
-                if not (i in duplicates):
-                    duplicates.append(i)
-                    new_str += i
-            else:
-                new_str += i
-        return new_str
+        pass
 
 
 class Caesar(Cipher):
@@ -69,9 +44,8 @@ class Caesar(Cipher):
 
         self.pos = None
         if re.search(r"\W+", self.key):
-            self.key = Cipher.delete_in_text(self.key, low=True, other=Caesar.OTHER_SYMBOL)
+            self.key = delete_in_text(self.key, low=True, other=Caesar.OTHER_SYMBOL)
             if re.search(r'\W+\d+', self.key):
-                #print(self.key)
                 raise KeyError('Внимание! Ключ не может содержать одновременно цифры и буквы!')
 
         if self.key == '':
@@ -92,7 +66,7 @@ class Caesar(Cipher):
             if re.search(r'[A-Za-z]+[А-Яа-я]+', self.key):
                 raise ValueError('Текст ключа должен быть на одном языке.')
 
-            self.key = Cipher.delete_duplicates(self.key)
+            self.key = delete_duplicates(self.key)
             print(f'key = {self.key}')
 
             if len(self.key) > len(self.language):
@@ -156,21 +130,34 @@ class Caesar(Cipher):
         assert len(res) == len(set(res)), f'duplicate error in generate {len(res)} != {len(set(res))}'
         return res
 
-    @staticmethod
-    def generate_int():
-        '''generate alphabet on numerical key'''
-        pass
-
 
 class Replace(Cipher):
-    def __init__(self, text: str = None, key=None):
+    def __init__(self, modl: str, text: str = None, key=None):
         super().__init__(text, key)
+        self.digit = False
+        if re.search(r"\D+", self.key):
+            raise ValueError('Ключ должен быть только из цифр!')
+        elif re.search(r'\d+'):
+            self.key = delete_in_text(self.key, low=False, other=Cipher.OTHER_SYMBOL)
+            if self.key.isdigit():
+                self.digit = True
+            else:
+                raise ValueError('Ключ должен быть только из цифр!')
 
     def main_func(self) -> str:
         '''Шифруем/Расшифровываем'''
         super().encrypt()
         new_message = ''
 
+        if self.digit:
+            self.text_gen = split_text(self.text, len(self.key))
+            pass
+
+        else:
+            self.text_gen = split_text(self.text)
+            self.text_gen = self.text_gen.reverse()
+            new_message = ''.join([i for j in self.text_gen for i in j])
+            return new_message
 
 class Vigenere(Cipher):
     def __init__(self, text: str = None, key=None):
