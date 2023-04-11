@@ -140,7 +140,10 @@ class Replace(Cipher):
         elif re.search(r'\d+', self.key):
             self.key = delete_in_text(self.key, low=False, other=Cipher.OTHER_SYMBOL)
             if self.key.isdigit():
-                self.digit = True
+                if len(self.key) > 20:
+                    raise ValueError('Слишком длинный ключ!')
+                else:
+                    self.digit = True
             else:
                 raise ValueError('Ключ должен быть только из цифр!')
 
@@ -150,17 +153,30 @@ class Replace(Cipher):
         '''Шифруем/Расшифровываем'''
 
         new_message = ''
+        if self.modl == 'encrypt':
 
-        if self.digit:
-            self.text_gen = split_text(self.text, len(self.key))
-            pass
+            if self.digit:
+                self.text_gen = split_text(self.text, len(self.key))
+                pass
+
+            else:
+
+                self.text_gen = split_text(self.text)[::-1]
+                max_len = max(map(len, self.text_gen))
+                new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
+                return new_message
 
         else:
-            self.text_gen = split_text(self.text)[::-1]
-            #self.text_gen.reverse()
-            max_len = max(map(len, self.text_gen))
-            new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
-            return new_message
+            if self.digit:
+                self.text_gen = split_text(self.text, len(self.key))
+                pass
+
+            else:
+
+                self.text_gen = split_text(self.text)[::-1]
+                max_len = max(map(len, self.text_gen))
+                new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
+                return new_message
 
 class Vigenere(Cipher):
     def __init__(self, text: str = None, key=None):
