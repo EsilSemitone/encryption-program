@@ -187,6 +187,8 @@ class MainWindowFrame(Frame):
         self.output_text.delete(0.0, END)
 
         try:
+            print('Изначальный текст')
+            print(self.try_text.get(0.0, END))
             self.new_text = self.ENCRYPT_LIST[self.choice_encrypt_var.get()]('encrypt',
                                                                              self.try_text.get(0.0, END),
                                                                              self.key_input.get()

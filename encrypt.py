@@ -14,7 +14,7 @@ class Cipher(ABC):
         self.modl = modl
 
         self.text = text
-        self.text = delete_in_text(text, low=True, other=Cipher.OTHER_SYMBOL)
+        self.text = delete_in_text(self.text, low=True, other=Cipher.OTHER_SYMBOL)
         if not self.text.isalpha():
             raise ValueError('Внимание! Не верно введен текст. Cообщение не может быть пустым'
                              ' Текст должен быть на одном языке.'
@@ -37,6 +37,9 @@ class Cipher(ABC):
     def main_func(self) -> str:
         pass
 
+    def __str__(self):
+        return self.new_message
+
 
 class Caesar(Cipher):
     def __init__(self, modl: str, text: str = None, key: str | int = 4):
@@ -52,9 +55,6 @@ class Caesar(Cipher):
             self.key = '4'
 
         self.new_message = self.main_func()
-
-    def __str__(self):
-        return self.new_message
 
     def main_func(self) -> str:
         '''Шифруем/Расшифровываем'''
@@ -133,20 +133,22 @@ class Caesar(Cipher):
 
 class Replace(Cipher):
     def __init__(self, modl: str, text: str = None, key=None):
-        super().__init__(text, key)
+        super().__init__(modl, text, key)
         self.digit = False
         if re.search(r"\D+", self.key):
             raise ValueError('Ключ должен быть только из цифр!')
-        elif re.search(r'\d+'):
+        elif re.search(r'\d+', self.key):
             self.key = delete_in_text(self.key, low=False, other=Cipher.OTHER_SYMBOL)
             if self.key.isdigit():
                 self.digit = True
             else:
                 raise ValueError('Ключ должен быть только из цифр!')
 
+        self.new_message = self.main_func()
+
     def main_func(self) -> str:
         '''Шифруем/Расшифровываем'''
-        super().encrypt()
+
         new_message = ''
 
         if self.digit:
@@ -154,9 +156,10 @@ class Replace(Cipher):
             pass
 
         else:
-            self.text_gen = split_text(self.text)
-            self.text_gen = self.text_gen.reverse()
-            new_message = ''.join([i for j in self.text_gen for i in j])
+            self.text_gen = split_text(self.text)[::-1]
+            #self.text_gen.reverse()
+            max_len = max(map(len, self.text_gen))
+            new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
             return new_message
 
 class Vigenere(Cipher):
@@ -165,7 +168,7 @@ class Vigenere(Cipher):
 
     def main_func(self) -> str:
         '''Шифруем/Расшифровываем'''
-        super().encrypt()
+
         new_message = ''
 
 
@@ -175,7 +178,7 @@ class Becon(Cipher):
 
     def main_func(self) -> str:
         '''Шифруем/Расшифровываем'''
-        super().encrypt()
+
         new_message = ''
 
 
@@ -185,6 +188,6 @@ class Atbash(Cipher):
 
     def main_func(self) -> str:
         '''Шифруем/Расшифровываем'''
-        super().encrypt()
+
         new_message = ''
 
