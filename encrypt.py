@@ -162,6 +162,7 @@ class Replace(Cipher):
             else:
 
                 self.text_gen = split_text(self.text)[::-1]
+                print(self.text_gen)
                 max_len = max(map(len, self.text_gen))
                 new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
                 return new_message
@@ -172,11 +173,12 @@ class Replace(Cipher):
                 pass
 
             else:
-
                 self.text_gen = split_text(self.text)[::-1]
-                max_len = max(map(len, self.text_gen))
-                new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
-                return new_message
+                print(self.text_gen)
+                #max_len = max(map(len, self.text_gen))
+                #new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
+                #return new_message
+                return self.text_gen
 
 class Vigenere(Cipher):
     def __init__(self, text: str = None, key=None):
