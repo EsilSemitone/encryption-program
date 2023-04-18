@@ -13,7 +13,7 @@ def delete_in_text(text: str, low=False, other=None) -> str:
 
 
 def delete_duplicates(string: str) -> str:
-    """Функция  для удаления дубликатов ключе"""
+    """Функция  для удаления дубликатов в ключе"""
     duplicates = []
     new_str = ''
     for i in string:
@@ -26,6 +26,6 @@ def delete_duplicates(string: str) -> str:
     return new_str
 
 
-def split_text(text: str | list, n=3) -> list:
+def split_text(text: str | list, length=3) -> list:
     """Разделение текста на списки"""
-    return [text[i:i + n] for i in range(0, len(text), n)]
+    return [text[i:i + length] for i in range(0, len(text), length)]

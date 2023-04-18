@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 import re
 
 from tools import delete_in_text, delete_duplicates, split_text
+
+
 class Cipher(ABC):
     ABC_ = {
         'Rus': 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
@@ -46,13 +48,18 @@ class Caesar(Cipher):
         super().__init__(modl, text, key)
 
         self.pos = None
-        if re.search(r"\W+", self.key):
-            self.key = delete_in_text(self.key, low=True, other=Caesar.OTHER_SYMBOL)
-            if re.search(r'\W+\d+', self.key):
-                raise KeyError('Внимание! Ключ не может содержать одновременно цифры и буквы!')
 
         if self.key == '':
             self.key = '4'
+
+        else:
+
+            if re.search(r"\W+", self.key):
+                self.key = delete_in_text(self.key, low=True, other=Caesar.OTHER_SYMBOL)
+                if re.search(r'\w+\d+', self.key):
+                    raise KeyError('Внимание! Ключ не может содержать одновременно цифры и буквы!')
+                if re.search(r'\W+', self.key):
+                    raise KeyError("Внимание! Ключ не может содержать что-либо кроме букв или цифр!")
 
         self.new_message = self.main_func()
 
@@ -115,7 +122,6 @@ class Caesar(Cipher):
                     new_message += self.language[index]
                 return new_message
 
-
     @staticmethod
     def generate_abc(abc: str, count_end: int, key) -> str:
         """Создаем алфавить для шифровки"""
@@ -123,10 +129,13 @@ class Caesar(Cipher):
         res = key
         abc = ''.join([i for i in abc if not (i in key)])
 
-        res = res + abc[0:count_end + 1] if count_end > 0 else res
-        print(f'В конце {abc[0:count_end + 1]} {count_end} символов')
-        res = abc[count_end + 1:] + res if count_end > 0 else abc + res
-        print(f"В начале {abc[count_end + 1:]} {len(abc[count_end + 1:])} символов")
+        if count_end > 0:
+            res = res + abc[0:count_end + 1]
+            print(f'В конце {abc[0:count_end + 1]} {count_end} символов')
+            res = abc[count_end + 1:] + res
+            print(f"В начале {abc[count_end + 1:]} {len(abc[count_end + 1:])} символов")
+        else:
+            res = abc + res
         assert len(res) == len(set(res)), f'duplicate error in generate {len(res)} != {len(set(res))}'
         return res
 
@@ -134,7 +143,9 @@ class Caesar(Cipher):
 class Replace(Cipher):
     def __init__(self, modl: str, text: str = None, key=None):
         super().__init__(modl, text, key)
+
         self.digit = False
+
         if re.search(r"\D+", self.key):
             raise ValueError('Ключ должен быть только из цифр!')
         elif re.search(r'\d+', self.key):
@@ -142,6 +153,8 @@ class Replace(Cipher):
             if self.key.isdigit():
                 if len(self.key) > 20:
                     raise ValueError('Слишком длинный ключ!')
+                elif len(self.key) == 1:
+                    raise ValueError('Слишком короткий ключ!')
                 else:
                     self.digit = True
             else:
@@ -162,9 +175,10 @@ class Replace(Cipher):
             else:
 
                 self.text_gen = split_text(self.text)[::-1]
-                print(self.text_gen)
+                print(f'Разбитый текст -> {self.text_gen}')
                 max_len = max(map(len, self.text_gen))
                 new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
+                print(new_message)
                 return new_message
 
         else:
@@ -173,12 +187,24 @@ class Replace(Cipher):
                 pass
 
             else:
-                self.text_gen = split_text(self.text)[::-1]
-                print(self.text_gen)
-                #max_len = max(map(len, self.text_gen))
-                #new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
-                #return new_message
-                return self.text_gen
+                if len(self.text) % 3 == 1:
+                    self.result = ''
+                    end = len(self.text) % 3
+                    text_end = self.text[0:end]
+                    self.text_gen = split_text(self.text[0+end:], length=len(self.text) // 3)
+                    print(self.text_gen)
+                    for i in range((len(self.text) // 3) - 1, -1, -1):
+                        for lst in self.text_gen:
+                            self.result += lst[i]
+                    return self.result + text_end
+                elif len(self.text) % 3 == 2:
+
+                else:
+                    self.text_gen = split_text(self.text, length=3)
+                    print(self.text_gen)
+                    self.result = ''.join([i[index] for index in range(2, -1, -1) for i in self.text_gen])
+                    return self.result
+
 
 class Vigenere(Cipher):
     def __init__(self, text: str = None, key=None):
@@ -208,4 +234,3 @@ class Atbash(Cipher):
         '''Шифруем/Расшифровываем'''
 
         new_message = ''
-

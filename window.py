@@ -187,8 +187,7 @@ class MainWindowFrame(Frame):
         self.output_text.delete(0.0, END)
 
         try:
-            print('Изначальный текст')
-            print(self.try_text.get(0.0, END))
+            print(f'Изначальный текст {self.try_text.get(0.0, END)}')
             self.new_text = self.ENCRYPT_LIST[self.choice_encrypt_var.get()]('encrypt',
                                                                              self.try_text.get(0.0, END),
                                                                              self.key_input.get()
@@ -199,6 +198,8 @@ class MainWindowFrame(Frame):
             print(er)
         except KeyError as er:
             messagebox.showerror('Внимание!', str(er))
+        except AssertionError as er:
+            messagebox.showerror('Внимание!',str(er))
 
     def decrypt(self):
         '''Раcшифровываем'''
@@ -212,9 +213,10 @@ class MainWindowFrame(Frame):
             self.output_text.insert(0.0, self.new_text)
         except ValueError as er:
             messagebox.showerror('Внимание!', str(er))
-            print(er)
         except KeyError as er:
             messagebox.showerror('Внимание!', str(er))
+        except AssertionError as er:
+            messagebox.showerror('Внимание!',str(er))
 
     def paste(self) -> None:
         '''Вставка в поле текста из буфера обмена'''
