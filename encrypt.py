@@ -162,6 +162,9 @@ class Replace(Cipher):
 
         self.new_message = self.main_func()
 
+        if self.digit:
+            self.key = self.key.split(',')
+
     def main_func(self) -> str:
         '''Шифруем/Расшифровываем'''
 
@@ -170,13 +173,13 @@ class Replace(Cipher):
 
             if self.digit:
                 self.text_gen = split_text(self.text, len(self.key))
-                pass
+                print(self.key)
 
             else:
 
-                self.text_gen = split_text(self.text)[::-1]
+                self.text_gen = split_text(self.text)
                 print(f'Разбитый текст -> {self.text_gen}')
-                max_len = max(map(len, self.text_gen))
+                max_len = 3
                 new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
                 print(new_message)
                 return new_message
@@ -187,23 +190,14 @@ class Replace(Cipher):
                 pass
 
             else:
-                if len(self.text) % 3 == 1:
-                    self.result = ''
-                    end = len(self.text) % 3
-                    text_end = self.text[0:end]
-                    self.text_gen = split_text(self.text[0+end:], length=len(self.text) // 3)
-                    print(self.text_gen)
-                    for i in range((len(self.text) // 3) - 1, -1, -1):
-                        for lst in self.text_gen:
-                            self.result += lst[i]
-                    return self.result + text_end
-                elif len(self.text) % 3 == 2:
-
-                else:
-                    self.text_gen = split_text(self.text, length=3)
-                    print(self.text_gen)
-                    self.result = ''.join([i[index] for index in range(2, -1, -1) for i in self.text_gen])
-                    return self.result
+                max_len = len(self.text) // 3
+                if len(self.text) % 3 > 0:
+                    max_len += 1
+                self.text_gen = split_text(self.text, length=max_len)
+                print(f'Разбитый текст -> {self.text_gen}')
+                new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
+                print(new_message)
+                return new_message
 
 
 class Vigenere(Cipher):
