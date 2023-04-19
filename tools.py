@@ -29,3 +29,6 @@ def delete_duplicates(string: str) -> str:
 def split_text(text: str | list, length=3) -> list:
     """Разделение текста на списки"""
     return [text[i:i + length] for i in range(0, len(text), length)]
+
+def extra_split_text(text: str, key: str = '123') -> list:
+    ...

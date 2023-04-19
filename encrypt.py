@@ -151,19 +151,18 @@ class Replace(Cipher):
         elif re.search(r'\d+', self.key):
             self.key = delete_in_text(self.key, low=False, other=Cipher.OTHER_SYMBOL)
             if self.key.isdigit():
-                if len(self.key) > 20:
+                if len(self.key) > len(self.text) // 2:
                     raise ValueError('Слишком длинный ключ!')
                 elif len(self.key) == 1:
                     raise ValueError('Слишком короткий ключ!')
+                elif len(self.key) != len(set(self.key)):
+                    raise ValueError('Некорректно введен ключ!')
                 else:
                     self.digit = True
             else:
                 raise ValueError('Ключ должен быть только из цифр!')
 
         self.new_message = self.main_func()
-
-        if self.digit:
-            self.key = self.key.split(',')
 
     def main_func(self) -> str:
         '''Шифруем/Расшифровываем'''
@@ -174,6 +173,8 @@ class Replace(Cipher):
             if self.digit:
                 self.text_gen = split_text(self.text, len(self.key))
                 print(self.key)
+                new_message = ''.join([i[int(index) - 1] for index in self.key for i in self.text_gen if len(i) > int(index) - 1])
+                return new_message
 
             else:
 
@@ -186,14 +187,50 @@ class Replace(Cipher):
 
         else:
             if self.digit:
-                self.text_gen = split_text(self.text, len(self.key))
-                pass
+                #Узнаю среднюю длину столбца в матрице
+                max_len = len(self.text) // len(self.key)
+                #Сколько столбцов с длиной выше среднего
+                full_count = len(self.text) % len(self.key)
+                self.text_gen = []
+                #отмечаю шаг
+                step = 0
+                for i in self.key:
+                    #здесь я определяю будет ключ максимальной длины или средней
+                    if int(i) > full_count:
+                        #Средней т.к порядковый номер столбца не попадает в диапазон с максимальным кол-вом
+                        self.text_gen.append(self.text[step:step + max_len])
+                        step += max_len
+                    else:
+                        #обратная ситуация
+                        self.text_gen.append((self.text[step: step + max_len + 1]))
+                        step += max_len + 1
+                #Это нужно чтобы ниже плясать от максимально возможной длины
+                if len(self.text) % len(self.key):
+                    max_len += 1
+                #Сортирую блоки
+                new_message = sorted(zip(self.key, self.text_gen))
+                print(new_message)
+                self.text_gen = [i[1] for i in new_message]
+                new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
+                return new_message
 
             else:
                 max_len = len(self.text) // 3
-                if len(self.text) % 3 > 0:
+                full_count = len(self.text) % 3
+                step = 0
+                self.text_gen = []
+                for i in range(3):
+                    if full_count:
+                        full_count -= 1
+                        self.text_gen.append(self.text[step:step + max_len + 1])
+                        step += max_len + 1
+                    else:
+                        self.text_gen.append(self.text[step:step + max_len])
+                        step += max_len
+
+                if len(self.text) % 3:
                     max_len += 1
-                self.text_gen = split_text(self.text, length=max_len)
+
                 print(f'Разбитый текст -> {self.text_gen}')
                 new_message = ''.join([i[index] for index in range(max_len) for i in self.text_gen if len(i) > index])
                 print(new_message)
