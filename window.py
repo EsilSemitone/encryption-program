@@ -1,7 +1,9 @@
+import tkinter
 from tkinter import Frame, WORD, SW, Button, \
     Tk, Text, END, Menu, PhotoImage, Scrollbar, \
     StringVar, Entry, messagebox
 from tkinter.ttk import Label, Radiobutton
+from tkinter import filedialog as fd
 
 from encrypt import Caesar, Replace, Vigenere, Becon, Atbash
 
@@ -29,7 +31,6 @@ class MainWindow:
         self.file_menu.add_command(label='Зашифровать файл')
         self.file_menu.add_command(label='Расшифровать файл')
         self.main_menu.add_cascade(label='Работа с файлами', menu=self.file_menu)
-        self.main_menu.add_cascade(label='Продвинутое шифрование')
 
         self.app.mainloop()
 
