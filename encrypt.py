@@ -19,13 +19,13 @@ class Cipher(ABC):
         self.text = text
         self.text = delete_in_text(self.text, low=True, sumbols=Cipher.OTHER_SYMBOL)
         if not self.text.isalpha():
-            raise ValueError('Внимание! Не верно введен текст. Cообщение не может быть пустым'
-                             ' Текст должен быть на одном языке.'
-                             ' Без цифр и других знаков')
+            raise ValueError('Attention! Wrong input text. Message cannot be empty'
+                             ' Text must be in the same language.'
+                             ' Without numerical and other')
         if re.search(r'[A-Za-z]+[А-Яа-я]+', self.text):
-            raise ValueError('Текст должен быть на одном языке.')
+            raise ValueError('Text must be in the same language.')
         elif re.search(r'\d+', text):
-            raise ValueError('К сожаления программа не может зашифровывать текст с цифрами.')
+            raise ValueError('i\'m sorry the program can\'t encrypt text with numerical')
         elif re.search(r"[A-Za-z]+", text):
             self.language = Cipher.ABC_['Eng']
         elif re.search(r"[А-Яа-я]+", text):
@@ -55,28 +55,28 @@ class Caesar(Cipher):
             if re.search(r"\W+", self.key):
                 self.key = delete_in_text(self.key, low=True, sumbols=Caesar.OTHER_SYMBOL)
                 if re.search(r'\w+\d+', self.key):
-                    raise KeyError('Внимание! Ключ не может содержать одновременно цифры и буквы!')
+                    raise KeyError('Attention! Key cannot have at the same time numerical and letters!')
                 elif re.search(r'\W+', self.key):
-                    raise KeyError("Внимание! Ключ не может содержать что-либо кроме букв или цифр!")
+                    raise KeyError("Attention! Key cannot have at the time anything but letters or numerical!")
 
         self.new_message = self.main_func()
 
     def main_func(self) -> str:
-        '''Шифруем/Расшифруем'''
+        '''Encrypt/Decrypt'''
 
         new_message = ''
 
         if self.key.isalpha():
 
             if re.search(r'[A-Za-z]+[А-Яа-я]+', self.key):
-                raise ValueError('Текст ключа должен быть на одном языке.')
+                raise ValueError('Key\' text must be only on one language.')
 
             self.key = delete_duplicates(self.key)
 
             if len(self.key) > len(self.language):
                 raise KeyError(
-                    f'Внимание! Ключевое слово должно '
-                    f'быть длинее 0 символов, но короче {len(self.language)}!')
+                    f'Attention! World-key must be '
+                    f'longer zero sumbols, but shorter than {len(self.language)}!')
 
             self.pos = len(self.key) if (len(self.language) - len(self.key) * 2) > 0 else len(self.key) // 2
 
@@ -123,16 +123,16 @@ class Caesar(Cipher):
 
     @staticmethod
     def generate_abc(abc: str, count_end: int, key) -> str:
-        """Создаем алфавить для шифровки"""
+        """Make alphabet for encryption"""
 
         new_alphabet = key
         abc = ''.join([i for i in abc if not (i in key)])
 
         if count_end > 0:
             new_alphabet = new_alphabet + abc[0:count_end + 1]
-            #print(f'В конце {abc[0:count_end + 1]} {count_end} символов')
+            #print(f'at the next {abc[0:count_end + 1]} {count_end} sumbols')
             new_alphabet = abc[count_end + 1:] + new_alphabet
-            #print(f"В начале {abc[count_end + 1:]} {len(abc[count_end + 1:])} символов")
+            #print(f"at first {abc[count_end + 1:]} {len(abc[count_end + 1:])} sumbols")
             res = new_alphabet
         else:
             res = abc + new_alphabet
@@ -146,43 +146,43 @@ class Replace(Cipher):
     def __init__(self, modl: str, text: str = None, key=None):
         super().__init__(modl, text, key)
 
-        #Переменная-макркер, если ключ валидный набор цифр -> True
+        #variable-marker, if key is valid, numeric kit -> True
         self.digit = False
 
-        #Проверка ключа на валидность
+        #check key for valid
         if re.search(r"\D+", self.key):
-            raise ValueError('Ключ должен быть только из цифр!')
+            raise ValueError('key must be only numbers!')
         elif re.search(r'\d+', self.key):
             self.key = delete_in_text(self.key, low=False, sumbols=Cipher.OTHER_SYMBOL)
             if self.key.isdigit():
                 max_number = max(map(int, self.key))
                 if set(map(int, self.key)) != set(range(1, max_number + 1)):
-                    raise ValueError('В ключе пропущены цифры')
+                    raise ValueError('Missing numbers in key')
                 elif len(self.key) > len(self.text) // 2 or len(self.key) > 9:
-                    raise ValueError('Слишком длинный ключ!')
+                    raise ValueError('Too long key!')
                 elif len(self.key) == 1:
-                    raise ValueError('Слишком короткий ключ!')
+                    raise ValueError('Too short key!')
                 elif len(self.key) != len(set(self.key)):
-                    raise ValueError('Некорректно введен ключ!')
+                    raise ValueError('invalid input key!')
                 else:
                     self.digit = True
             else:
-                raise ValueError('Ключ должен быть только из цифр!')
+                raise ValueError('key must be only numbers!')
 
         self.new_message = self.main_func()
 
     def main_func(self) -> str:
-        '''Шифруем/Расшифруем'''
+        '''Encrupt|decrypt'''
 
         new_message = ''
         if self.modl == 'encrypt':
 
             if self.digit:
-                #Разбиваем текст на матрицу где длина стоки равняется длине ключа
+                #We break the text into a matrix where the length of the string is equal to the length of the key
                 self.text_split = split_text(self.text, len(self.key))
                 #print(self.key)
 
-                #С каждой строки берется символ по ключу
+                #From each line, a character is taken by key
                 new_message = ''.join([
                     i[int(index) - 1] for index in self.key
                     for i in self.text_split if len(i) > int(index) - 1
@@ -191,13 +191,13 @@ class Replace(Cipher):
                 return new_message
 
             else:
-                # Разбиваем текст на матрицу где длина стоки равняется трем
+                # We split the text into a matrix where the length of the line is three
                 self.text_split = split_text(self.text)
-                #print(f'Разбитый текст -> {self.text_split}')
+                #print(f'broken text -> {self.text_split}')
 
                 average_len = 3
 
-                # С каждой строки берется символ по нарастающей
+                # A character is taken from each line in ascending order.
                 new_message = ''.join([
                     i[index] for index in range(average_len)
                     for i in self.text_split if len(i) > index
@@ -207,34 +207,34 @@ class Replace(Cipher):
 
         else:
             if self.digit:
-                #Узнаю среднюю длину столбца в матрице
+                #Find out the average length of a column in a matrix
                 average_len = len(self.text) // len(self.key)
 
-                #Сколько столбцов с длиной выше среднего
+                #How many columns with length above average
                 full_count = len(self.text) % len(self.key)
 
                 self.text_split = []
 
-                #отмечаю шаг
+                #mark the step
                 step = 0
 
                 for i in self.key:
 
-                    #здесь я определяю будет ключ максимальной длины или средней
+                    #here I define whether the key will be the maximum length or the average
                     if int(i) > full_count:
-                        #Средней т.к порядковый номер столбца не попадает в диапазон с максимальным кол-вом
+                        #Average because the ordinal number of the column does not fall into the range with the maximum number
                         self.text_split.append(self.text[step:step + average_len])
                         step += average_len
                     else:
-                        #обратная ситуация
+                        #reverse situation
                         self.text_split.append((self.text[step: step + average_len + 1]))
                         step += average_len + 1
 
-                #Это нужно чтобы ниже плясать от максимально возможной длины
+                #This is necessary to dance below from the maximum possible length
                 if len(self.text) % len(self.key):
                     average_len += 1
 
-                #Сортирую блоки чтобы похже легче было вытаскивать по индексам
+                #I sort the blocks to make it easier to pull out by indexes
                 new_message = sorted(zip(self.key, self.text_split))
                 #print(new_message)
 
@@ -247,10 +247,10 @@ class Replace(Cipher):
                 return new_message
 
             else:
-                # Если ключ не введен
+                # If the key is not entered
                 average_len = len(self.text) // 3
 
-                # Сколько столбцов с длиной выше среднего
+                # How many columns with length above average
                 full_count = len(self.text) % 3
                 step = 0
                 self.text_split = []
@@ -267,7 +267,7 @@ class Replace(Cipher):
                 if len(self.text) % 3:
                     average_len += 1
 
-                #print(f'Разбитый текст -> {self.text_split}')
+                #print(f'broken text -> {self.text_split}')
                 new_message = ''.join([
                     i[index] for index in range(average_len)
                     for i in self.text_split if len(i) > index
@@ -280,15 +280,15 @@ class Vigenere(Cipher):
     def __init__(self, modl: str, text: str = None, key=None):
         super().__init__(modl, text, key)
 
-        #Проверка на ключ
+        #Key check
         if self.key == '':
-            raise KeyError('Не введен ключ')
+            raise KeyError('Key not entered')
         elif re.search(r'/d+', self.key) or any([i in self.key for i in Cipher.OTHER_SYMBOL]):
-            raise KeyError('Ключ не может содержать цифры или или другие знаки')
+            raise KeyError('The key cannot contain numbers or other characters')
         elif len(self.key) > len(self.language):
-            raise KeyError('Ключ не может быть длинее текста')
+            raise KeyError('Key cannot be longer than text')
         elif len(self.key) < 2:
-            raise KeyError('Слишком короткий ключ')
+            raise KeyError('Key too short')
 
         self.language_key = ''
 
@@ -298,13 +298,13 @@ class Vigenere(Cipher):
             self.language_key = Cipher.ABC_['Rus']
 
         if self.language_key != self.language:
-            raise KeyError('Язык ключа не совпадает с текстом')
+            raise KeyError('Key language does not match text')
 
         self.new_message = self.main_func()
 
 
     def main_func(self) -> str:
-        '''Шифруем/Расшифуем'''
+        '''Encrypt / Decrypt'''
 
         new_message = ''
         self.key = self.key_gen(self.key)
@@ -346,7 +346,7 @@ class Becon(Cipher):
 
 
     def main_func(self) -> str:
-        '''Шифруем/Расшифруем'''
+        '''Encrypt / Decrypt'''
 
         new_message = ''
         intermediate_message = ''
@@ -360,7 +360,6 @@ class Becon(Cipher):
                     new_message += choice(self.even_letters)
                 else:
                     new_message += choice(self.not_even_letters)
-
 
         else:
 
@@ -388,7 +387,7 @@ class Becon(Cipher):
         return res
 
     def bin_list_key(self, abc: str) -> dict:
-        '''Function for make Becon's alphabet'''
+        '''Function for make Becon's alphabet keys'''
         res = {}
         for i in abc:
             number = format(abc.index(i), 'b')
@@ -407,7 +406,7 @@ class Atbash(Cipher):
         self.new_message = self.main_func()
 
     def main_func(self) -> str:
-        '''Шифруем/Расшифруем'''
+        '''Encrypt / Decrypt'''
 
         new_message = ''
 

@@ -1,8 +1,8 @@
-"""Инструменты для шифровки"""
+"""Toold for encrypt"""
 
 
 def delete_in_text(text: str, low=False, sumbols=None) -> str:
-    """Тут все понятно"""
+
     if sumbols:
         for i in sumbols:
             text = text.replace(f'{i}', '')
@@ -13,7 +13,7 @@ def delete_in_text(text: str, low=False, sumbols=None) -> str:
 
 
 def delete_duplicates(string: str) -> str:
-    """Функция  для удаления дубликатов в ключе"""
+
     duplicates = []
     new_str = ''
     for i in string:
@@ -27,5 +27,4 @@ def delete_duplicates(string: str) -> str:
 
 
 def split_text(text: str | list, length=3) -> list:
-    """Разделение текста на списки"""
     return [text[i:i + length] for i in range(0, len(text), length)]
